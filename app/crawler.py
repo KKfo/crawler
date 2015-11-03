@@ -1,4 +1,8 @@
 #!/bin/python3
+#
+#       Crawl an entire site.
+#
+
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
