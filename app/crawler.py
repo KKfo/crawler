@@ -15,6 +15,7 @@ import math
 import time
 import math
 import logging
+import itertools
 
 if (len(sys.argv) != 2):
     print('Usage:'+sys.argv[0]+' http://example.com')
@@ -27,7 +28,6 @@ NOT_MEDIA = lambda u: not re.compile(r'^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:
 NOT_INDEXED = lambda u: u not in VIS
 REQUESTS = 0
 START_T = time.time()
-
 def print_info():
     global START_T
     global REQUESTS
@@ -49,9 +49,10 @@ async def get(u,c, log):
             page = await response.read()
         print_info()
         log("Visited: %s", u)
-        soup = BeautifulSoup(page,'lxml').find_all('a')
+        s = BeautifulSoup(page,'lxml')
+        atags = s.find_all('a')
         links  = [ADD(urljoin(seed, a.get('href')))
-                  for a in soup if is_ok(a.get('href'))]
+                  for a in atags if is_ok(a.get('href'))]
         if (links):
             asyncio.wait([asyncio.ensure_future(get(li, c, log)) for li in links])
     except Exception as e:
